@@ -22,6 +22,6 @@ public class MinecraftServerMixin {
     @Inject(method = "loadWorld", at = @At("HEAD"))
     protected void load(String string_1, String string_2, long long_1, LevelGeneratorType levelGeneratorType_1, JsonElement jsonElement_1, CallbackInfo ci) {
         VanishDB.data.clear();
-        VanishDB.vanishBar = new ServerBossBar(new LiteralText("Vainished").formatted(Formatting.WHITE), BossBar.Color.WHITE, BossBar.Style.PROGRESS);
+        VanishDB.vanishBar = new ServerBossBar(new LiteralText("You Are Vainished").formatted(Formatting.WHITE), BossBar.Color.WHITE, BossBar.Style.PROGRESS);
     }
 }
