@@ -23,16 +23,24 @@ import java.util.function.Consumer;
  */
 public class VanishCommand {
     private enum Setting {
-        COLLIDEABLE("colideable",
-                pair -> VanishDB.getOrCreateSettings(pair.getLeft()).collideable = pair.getRight(),
-                pair -> pair.getRight().set(VanishDB.getOrCreateSettings(pair.getLeft()).collideable));
+        ;
         String id;
-        Consumer<Pair<UUID, Boolean>> setter;
-        Consumer<Pair<UUID, AtomicBoolean>> getter;
-        Setting(String id, Consumer<Pair<UUID, Boolean>> setter, Consumer<Pair<UUID, AtomicBoolean>> getter) {
+        Consumer<Pair<VanishDB.VanishSettings, Boolean>> setter;
+        Consumer<Pair<VanishDB.VanishSettings, AtomicBoolean>> getter;
+        Setting(String id, Consumer<Pair<VanishDB.VanishSettings, Boolean>> setter, Consumer<Pair<VanishDB.VanishSettings, AtomicBoolean>> getter) {
             this.id = id;
             this.getter = getter;
             this.setter = setter;
+        }
+        public boolean get(UUID uuid) {
+            VanishDB.VanishSettings settings = VanishDB.getOrCreateSettings(uuid);
+            AtomicBoolean value = new AtomicBoolean();
+            getter.accept(new Pair<>(settings, value));
+            return value.get();
+        }
+        public void set(UUID uuid, boolean enabled) {
+            VanishDB.VanishSettings settings = VanishDB.getOrCreateSettings(uuid);
+            setter.accept(new Pair<>(settings, enabled));
         }
     }
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -61,14 +69,13 @@ public class VanishCommand {
     }
     private static int readSetting(ServerCommandSource source, Setting setting) throws CommandSyntaxException {
         UUID uuid = source.getPlayer().getGameProfile().getId();
-        AtomicBoolean enabled = new AtomicBoolean();
-        setting.getter.accept(new Pair<>(uuid, enabled));
-        source.sendFeedback(new LiteralText(setting.id + " is " + (enabled.get() ? "enabled" : "disabled")).formatted(Formatting.YELLOW), false);
+        boolean enabled = setting.get(uuid);
+        source.sendFeedback(new LiteralText(setting.id + " is " + (enabled ? "enabled" : "disabled")).formatted(Formatting.YELLOW), false);
         return 0;
     }
     private static int writeSetting(ServerCommandSource source, Setting setting, boolean enabled) throws CommandSyntaxException {
         UUID uuid = source.getPlayer().getGameProfile().getId();
-        setting.setter.accept(new Pair<>(uuid, enabled));
+        setting.set(uuid, enabled);
         source.sendFeedback(new LiteralText(setting.id + " is now " + (enabled ? "enabled" : "disabled")).formatted(Formatting.GREEN), false);
         return 0;
     }
