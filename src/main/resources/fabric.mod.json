@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "vanish",
+  "version": "${version}",
+
+  "name": "Full Vanish",
+  "description": "Disappear off the face of the earth",
+  "authors": [
+    "Indicode"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/vanish/icon.png",
+
+  "environment": "*",
+  "mixins": [
+    "vanish.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.4.0"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
