@@ -3,7 +3,8 @@
   "package": "io.github.indicode.fabric.vanish.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "CommandManagerMixin"
+    "CommandManagerMixin",
+    "MinecraftServerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

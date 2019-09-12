@@ -1,5 +1,7 @@
 package io.github.indicode.fabric.vanish;
 
+import net.minecraft.entity.boss.ServerBossBar;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -8,6 +10,7 @@ import java.util.UUID;
  * @author Indigo Amann
  */
 public class VanishDB {
+    public static ServerBossBar vanishBar = null;
     public static final Map<UUID, VanishSettings> data = new HashMap<>();
     public static class VanishSettings {
         public boolean vanished = false;
