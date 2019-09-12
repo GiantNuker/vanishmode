@@ -13,8 +13,9 @@ public class VanishDB {
     public static ServerBossBar vanishBar = null;
     public static final Map<UUID, VanishSettings> data = new HashMap<>();
     public static class VanishSettings {
-        public boolean vanished = false;
-        public boolean seeVanished = false;
+        public boolean vanished = false,
+        seeVanished = false,
+        collideable = false;
     }
     public static VanishSettings getOrCreateSettings(UUID id) {
         if (!data.containsKey(id)) {
