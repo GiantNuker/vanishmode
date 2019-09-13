@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.client.network.packet.TeamS2CPacket;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -80,22 +81,45 @@ public class VanishCommand {
         return 0;
     }
     private static int toggleVanish(ServerPlayerEntity player) {
-        VanishDB.setVanished(player.getGameProfile().getId(), !VanishDB.isVanished(player.getGameProfile().getId()));
+        boolean vanished = !VanishDB.isVanished(player.getGameProfile().getId());
+        VanishDB.setVanished(player.getGameProfile().getId(), vanished);
+        player.sendMessage(new LiteralText("You are " + (vanished ? "now in" : "no longer in") + " vanish.").formatted(Formatting.GREEN));
         updateBossBar(player);
         return 0;
     }
     private static int toggleSeesVanish(ServerPlayerEntity player) {
-        VanishDB.setSeesVanished(player.getGameProfile().getId(), !VanishDB.canSeeVanished(player.getGameProfile().getId()));
+        boolean seevanished = !VanishDB.canSeeVanished(player.getGameProfile().getId());
+        VanishDB.setSeesVanished(player.getGameProfile().getId(), seevanished);
+        player.sendMessage(new LiteralText("You can " + (seevanished ? "now see" : "no longer see") + " players in vanish.").formatted(Formatting.GREEN));
         updateBossBar(player);
         return 0;
     }
     private static void updateBossBar(ServerPlayerEntity player) {
         boolean vanished = VanishDB.isVanished(player.getGameProfile().getId());
-        player.sendMessage(new LiteralText("You are " + (vanished ? "now in" : "no longer in") + " vanish.").formatted(Formatting.GREEN));
         if (vanished) {
             VanishDB.vanishBar.addPlayer(player);
         } else {
             VanishDB.vanishBar.removePlayer(player);
         }
+        player.sendAbilitiesUpdate();
+        boolean seesVanished = VanishDB.canSeeVanished(player.getGameProfile().getId());
+        boolean sval = VanishDB.vanishersVisibleTeam.getPlayerList().contains(player.getGameProfile().getName());
+        if (sval != seesVanished) {
+            if (seesVanished) {
+                VanishDB.vanishTeamsScoreboard.addPlayerToTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
+            } else {
+                VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
+            }
+            System.out.println(VanishDB.vanishersVisibleTeam.getPlayerList());
+            player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, seesVanished ? 0 : 1));
+            player.world.getPlayers().forEach(nplayer -> {
+                if (nplayer != player && VanishDB.canSeeVanished(nplayer.getGameProfile().getId())) {
+                    System.out.println("Packet sent to " + nplayer.getGameProfile().getName());
+                    player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, 1));
+                    player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, 0));
+                }
+            });
+        }
     }
+        //VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
 }

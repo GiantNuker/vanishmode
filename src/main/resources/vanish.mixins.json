@@ -5,7 +5,8 @@
   "mixins": [
     "CommandManagerMixin",
     "MinecraftServerMixin",
-    "PlayerEntityMixin"
+    "PlayerEntityMixin",
+    "EntityTrackerEntryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

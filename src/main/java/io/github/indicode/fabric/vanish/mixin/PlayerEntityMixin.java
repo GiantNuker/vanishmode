@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
@@ -25,11 +26,11 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
 
     @Override
     public Box getBoundingBox() {
-        if (VanishDB.isVanished(getGameProfile().getId())) {
-            return new Box(0, 0, 0, 0, 0, 0);
-        } else {
+        //if (VanishDB.isVanished(getGameProfile().getId())) {
+            //return new Box(0, 0, 0, 0, 0, 0);
+        //} else {
             return super.getBoundingBox();
-        }
+        //}
     }
     @Override
     public boolean isPushable() {
@@ -43,5 +44,9 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     @Inject(method = "isSpectator", at = @At("HEAD"), cancellable = true)
     public void isVanished(CallbackInfoReturnable ci) {
         if (VanishDB.isVanished(getGameProfile().getId())) ci.setReturnValue(true);
+    }
+    @Inject(method = "updatePotionVisibility", at = @At("HEAD"), cancellable = true)
+    public void dontApplyHere(CallbackInfo ci) {
+        if (VanishDB.isVanished(getGameProfile().getId())) ((ServerPlayerEntity)(Object)this).setInvisible(true);
     }
 }
