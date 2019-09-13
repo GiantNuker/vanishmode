@@ -40,4 +40,8 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
         if (VanishDB.isVanished(getGameProfile().getId())) return;
         else super.pushAwayFrom(entity_1);
     }
+    @Inject(method = "isSpectator", at = @At("HEAD"), cancellable = true)
+    public void isVanished(CallbackInfoReturnable ci) {
+        if (VanishDB.isVanished(getGameProfile().getId())) ci.setReturnValue(true);
+    }
 }
