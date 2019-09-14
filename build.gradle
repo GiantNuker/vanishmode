@@ -21,7 +21,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modCompile "io.github.indicode.fabric:LanOps:1.0.0"
+	//modCompile "io.github.indicode.fabric:LanOps:1.0.0"
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.

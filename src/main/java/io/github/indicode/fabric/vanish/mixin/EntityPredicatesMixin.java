@@ -27,7 +27,6 @@ public class EntityPredicatesMixin {
     }
     @Redirect(method = "method_5910", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;isSpectator()Z"))
     private static boolean checkMobsIgnore(Entity entity) {
-        System.out.println("mobpred");
         if (entity.isSpectator()) return true;
         if (entity instanceof ServerPlayerEntity) {
             UUID uuid = ((ServerPlayerEntity) entity).getGameProfile().getId();
