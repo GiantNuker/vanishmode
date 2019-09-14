@@ -6,7 +6,11 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.client.network.packet.ScoreboardDisplayS2CPacket;
+import net.minecraft.client.network.packet.ScoreboardObjectiveUpdateS2CPacket;
+import net.minecraft.client.network.packet.ScoreboardPlayerUpdateS2CPacket;
 import net.minecraft.client.network.packet.TeamS2CPacket;
+import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -25,7 +29,8 @@ import java.util.function.Consumer;
  */
 public class VanishCommand {
     private enum Setting {
-        ;
+        MOBS_IGNORE("mobs_ignore", pair -> pair.getLeft().mobs_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().mobs_ignore)),
+        SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate));
         String id;
         Consumer<Pair<VanishDB.VanishSettings, Boolean>> setter;
         Consumer<Pair<VanishDB.VanishSettings, AtomicBoolean>> getter;
@@ -113,11 +118,18 @@ public class VanishCommand {
             }
             System.out.println(VanishDB.vanishersVisibleTeam.getPlayerList());
             player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, seesVanished ? 0 : 1));
+            if (!vanished && seesVanished) {
+                player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), 3));
+                VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
+            }
             player.world.getPlayers().forEach(nplayer -> {
-                if (VanishDB.canSeeVanished(nplayer.getGameProfile().getId())) {
-                    ((ServerPlayerEntity)nplayer).networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), seesVanished ? 3 : 4));
+                if (nplayer != player && VanishDB.canSeeVanished(nplayer.getGameProfile().getId())) {
+                    ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
+                    pl.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), vanished ? 3 : 4));
                 }
             });
+        } else if (!seesVanished) {
+            player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, 1));
         }
     }
         //VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);

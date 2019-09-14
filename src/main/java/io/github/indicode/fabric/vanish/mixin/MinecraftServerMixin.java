@@ -4,8 +4,7 @@ import com.google.gson.JsonElement;
 import io.github.indicode.fabric.vanish.VanishDB;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
+import net.minecraft.scoreboard.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.LiteralText;
@@ -28,9 +27,12 @@ public class MinecraftServerMixin {
 
         MinecraftServer server = (MinecraftServer)(Object)this;
         VanishDB.vanishTeamsScoreboard = new Scoreboard();
+
         VanishDB.vanishersVisibleTeam = new Team(VanishDB.vanishTeamsScoreboard, "vanish_seers");
         VanishDB.vanishersVisibleTeam.setShowFriendlyInvisibles(true);
         VanishDB.vanishersVisibleTeam.setFriendlyFireAllowed(true);
-        VanishDB.vanishersVisibleTeam.setColor(Formatting.GOLD);
+        VanishDB.vanishersVisibleTeam.setPrefix(new LiteralText("[").formatted(Formatting.GRAY).append(new LiteralText("V").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("] ").formatted(Formatting.GRAY))));
+        VanishDB.vanishersVisibleTeam.setSuffix(new LiteralText(" [").formatted(Formatting.GRAY).append(new LiteralText("V").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("]").formatted(Formatting.GRAY))));
+        VanishDB.vanishersVisibleTeam.setCollisionRule(AbstractTeam.CollisionRule.NEVER);
     }
 }

@@ -2,6 +2,7 @@ package io.github.indicode.fabric.vanish;
 
 import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.Team;
 
 import java.util.HashMap;
@@ -18,7 +19,9 @@ public class VanishDB {
     public static final Map<UUID, VanishSettings> data = new HashMap<>();
     public static class VanishSettings {
         public boolean vanished = false,
-        seeVanished = false
+        seeVanished = false,
+        mobs_ignore = true,
+        spectator_predicate = true;
     }
     public static VanishSettings getOrCreateSettings(UUID id) {
         if (!data.containsKey(id)) {
