@@ -18,8 +18,7 @@ public class VanishDB {
     public static final Map<UUID, VanishSettings> data = new HashMap<>();
     public static class VanishSettings {
         public boolean vanished = false,
-        seeVanished = false,
-        givenViewerTeam = false;
+        seeVanished = false
     }
     public static VanishSettings getOrCreateSettings(UUID id) {
         if (!data.containsKey(id)) {

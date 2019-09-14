@@ -14,6 +14,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Pair;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -113,10 +114,8 @@ public class VanishCommand {
             System.out.println(VanishDB.vanishersVisibleTeam.getPlayerList());
             player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, seesVanished ? 0 : 1));
             player.world.getPlayers().forEach(nplayer -> {
-                if (nplayer != player && VanishDB.canSeeVanished(nplayer.getGameProfile().getId())) {
-                    System.out.println("Packet sent to " + nplayer.getGameProfile().getName());
-                    player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, 1));
-                    player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, 0));
+                if (VanishDB.canSeeVanished(nplayer.getGameProfile().getId())) {
+                    ((ServerPlayerEntity)nplayer).networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), seesVanished ? 3 : 4));
                 }
             });
         }

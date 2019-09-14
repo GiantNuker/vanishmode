@@ -24,11 +24,13 @@ public class MinecraftServerMixin {
     @Inject(method = "loadWorld", at = @At("HEAD"))
     protected void load(String string_1, String string_2, long long_1, LevelGeneratorType levelGeneratorType_1, JsonElement jsonElement_1, CallbackInfo ci) {
         VanishDB.data.clear();
-        VanishDB.vanishBar = new ServerBossBar(new LiteralText("You Are In Vainish").formatted(Formatting.WHITE), BossBar.Color.WHITE, BossBar.Style.PROGRESS);
+        VanishDB.vanishBar = new ServerBossBar(new LiteralText("You Are In Vanish").formatted(Formatting.WHITE), BossBar.Color.WHITE, BossBar.Style.PROGRESS);
 
         MinecraftServer server = (MinecraftServer)(Object)this;
         VanishDB.vanishTeamsScoreboard = new Scoreboard();
         VanishDB.vanishersVisibleTeam = new Team(VanishDB.vanishTeamsScoreboard, "vanish_seers");
+        VanishDB.vanishersVisibleTeam.setShowFriendlyInvisibles(true);
         VanishDB.vanishersVisibleTeam.setFriendlyFireAllowed(true);
+        VanishDB.vanishersVisibleTeam.setColor(Formatting.GOLD);
     }
 }
