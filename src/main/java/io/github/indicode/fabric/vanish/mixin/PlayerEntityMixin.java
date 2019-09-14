@@ -26,11 +26,11 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
 
     @Override
     public Box getBoundingBox() {
-        //if (VanishDB.isVanished(getGameProfile().getId())) {
-            //return new Box(0, 0, 0, 0, 0, 0);
-        //} else {
+        if (VanishDB.isVanished(getGameProfile().getId()) && VanishDB.getOrCreateSettings(getGameProfile().getId()).boundingbox) {
+            return new Box(0, 0, 0, 0, 0, 0);
+        } else {
             return super.getBoundingBox();
-        //}
+        }
     }
     @Override
     public boolean isPushable() {
@@ -47,6 +47,6 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     }
     @Inject(method = "updatePotionVisibility", at = @At("RETURN"), cancellable = true)
     public void dontApplyHere(CallbackInfo ci) {
-        if (VanishDB.isVanished(getGameProfile().getId())) ((ServerPlayerEntity)(Object)this).setInvisible(true);
+        //if (VanishDB.isVanished(getGameProfile().getId())) ((ServerPlayerEntity)(Object)this).setInvisible(true);
     }
 }

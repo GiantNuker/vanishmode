@@ -6,10 +6,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.client.network.packet.ScoreboardDisplayS2CPacket;
-import net.minecraft.client.network.packet.ScoreboardObjectiveUpdateS2CPacket;
-import net.minecraft.client.network.packet.ScoreboardPlayerUpdateS2CPacket;
-import net.minecraft.client.network.packet.TeamS2CPacket;
+import net.minecraft.client.network.packet.*;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -30,7 +27,8 @@ import java.util.function.Consumer;
 public class VanishCommand {
     private enum Setting {
         MOBS_IGNORE("mobs_ignore", pair -> pair.getLeft().mobs_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().mobs_ignore)),
-        SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate));
+        SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate)),
+        BOUNDINGBOX("no_hitbox", pair -> pair.getLeft().boundingbox = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().boundingbox));
         String id;
         Consumer<Pair<VanishDB.VanishSettings, Boolean>> setter;
         Consumer<Pair<VanishDB.VanishSettings, AtomicBoolean>> getter;
@@ -88,27 +86,27 @@ public class VanishCommand {
     }
     private static int toggleVanish(ServerPlayerEntity player) {
         boolean vanished = !VanishDB.isVanished(player.getGameProfile().getId());
-        VanishDB.setVanished(player.getGameProfile().getId(), vanished);
         player.sendMessage(new LiteralText("You are " + (vanished ? "now in" : "no longer in") + " vanish.").formatted(Formatting.GREEN));
-        updateBossBar(player);
+        updateBossBar(player, vanished, VanishDB.getOrCreateSettings(player.getGameProfile().getId()).seeVanished);
         return 0;
     }
     private static int toggleSeesVanish(ServerPlayerEntity player) {
         boolean seevanished = !VanishDB.canSeeVanished(player.getGameProfile().getId());
-        VanishDB.setSeesVanished(player.getGameProfile().getId(), seevanished);
         player.sendMessage(new LiteralText("You can " + (seevanished ? "now see" : "no longer see") + " players in vanish.").formatted(Formatting.GREEN));
-        updateBossBar(player);
+        updateBossBar(player, VanishDB.isVanished(player.getGameProfile().getId()), seevanished);
         return 0;
     }
-    private static void updateBossBar(ServerPlayerEntity player) {
-        boolean vanished = VanishDB.isVanished(player.getGameProfile().getId());
+    private static void updateBossBar(ServerPlayerEntity player, boolean vanished, boolean seeVanished) {
+        boolean newVanish = VanishDB.isVanished(player.getGameProfile().getId()) != vanished;
+        VanishDB.setVanished(player.getGameProfile().getId(), vanished);
+        VanishDB.setSeesVanished(player.getGameProfile().getId(), seeVanished);
+        boolean seesVanished = vanished || seeVanished;
         if (vanished) {
             VanishDB.vanishBar.addPlayer(player);
         } else {
             VanishDB.vanishBar.removePlayer(player);
         }
         player.sendAbilitiesUpdate();
-        boolean seesVanished = VanishDB.canSeeVanished(player.getGameProfile().getId());
         boolean sval = VanishDB.vanishersVisibleTeam.getPlayerList().contains(player.getGameProfile().getName());
         if (sval != seesVanished) {
             if (seesVanished) {
@@ -122,15 +120,26 @@ public class VanishCommand {
                 player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), 3));
                 VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
             }
-            player.world.getPlayers().forEach(nplayer -> {
-                if (nplayer != player && VanishDB.canSeeVanished(nplayer.getGameProfile().getId())) {
-                    ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
-                    pl.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), vanished ? 3 : 4));
-                }
-            });
         } else if (!seesVanished) {
             player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, 1));
         }
+            player.world.getPlayers().forEach(nplayer -> {
+                ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
+                if (nplayer != player && VanishDB.canSeeVanished(nplayer.getGameProfile().getId())) {
+                    pl.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), vanished ? 3 : 4));
+
+                } else if (nplayer != player && newVanish) {
+                    pl.networkHandler.sendPacket(vanished ? new EntitiesDestroyS2CPacket(player.getEntityId()) :
+                            new PlayerSpawnS2CPacket(player));
+                }
+                if (sval != seesVanished && pl != player) {
+                    player.networkHandler.sendPacket(!seesVanished && VanishDB.isVanished(pl.getGameProfile().getId()) ? new EntitiesDestroyS2CPacket(pl.getEntityId()) :
+                            new PlayerSpawnS2CPacket(pl));
+                } else if (!seesVanished && pl != player && VanishDB.isVanished(pl.getGameProfile().getId())) {
+                    player.networkHandler.sendPacket(new EntitiesDestroyS2CPacket(pl.getEntityId()));
+                }
+            });
+
     }
         //VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
 }

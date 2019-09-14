@@ -6,7 +6,8 @@
     "CommandManagerMixin",
     "MinecraftServerMixin",
     "PlayerEntityMixin",
-    "EntityTrackerEntryMixin"
+    "EntityTrackerEntryMixin",
+    "EntityPredicatesMixin"
   ],
   "injectors": {
     "defaultRequire": 1

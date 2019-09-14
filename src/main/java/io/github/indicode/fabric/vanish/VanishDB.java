@@ -21,7 +21,8 @@ public class VanishDB {
         public boolean vanished = false,
         seeVanished = false,
         mobs_ignore = true,
-        spectator_predicate = true;
+        spectator_predicate = true,
+        boundingbox = true;
     }
     public static VanishSettings getOrCreateSettings(UUID id) {
         if (!data.containsKey(id)) {
