@@ -8,7 +8,8 @@
     "PlayerEntityMixin",
     "EntityTrackerEntryMixin",
     "EntityPredicatesMixin",
-    "RaidManagerMixin"
+    "RaidManagerMixin",
+    "ZombieSiegeMixin"
   ],
   "injectors": {
     "defaultRequire": 1
