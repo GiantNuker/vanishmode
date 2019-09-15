@@ -31,8 +31,9 @@ public class VanishCommand {
     private enum Setting {
         MOBS_IGNORE("mobs_ignore", pair -> pair.getLeft().mobs_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().mobs_ignore)),
         EVENTS_IGNORE("events_ignore", pair -> pair.getLeft().events_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().events_ignore)),
-        SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate)),
-        BOUNDINGBOX("no_hitbox", pair -> pair.getLeft().boundingbox = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().boundingbox));
+        //SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate)),
+        BOUNDINGBOX("no_hitbox", pair -> pair.getLeft().boundingbox = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().boundingbox)),
+        GENERATE_LOOT("generate_loot", pair -> pair.getLeft().generates_chests = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().generates_chests));
         String id;
         Consumer<Pair<VanishDB.VanishSettings, Boolean>> setter;
         Consumer<Pair<VanishDB.VanishSettings, AtomicBoolean>> getter;

@@ -9,7 +9,8 @@
     "EntityTrackerEntryMixin",
     "EntityPredicatesMixin",
     "RaidManagerMixin",
-    "ZombieSiegeMixin"
+    "ZombieSiegeMixin",
+    "LootableContainerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -23,7 +23,8 @@ public class VanishDB {
         mobs_ignore = true,
         events_ignore = true,
         spectator_predicate = true,
-        boundingbox = false;
+        boundingbox = false,
+        generates_chests = false;
     }
     public static VanishSettings getOrCreateSettings(UUID id) {
         if (!data.containsKey(id)) {
