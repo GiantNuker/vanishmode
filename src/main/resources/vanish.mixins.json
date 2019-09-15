@@ -7,7 +7,8 @@
     "MinecraftServerMixin",
     "PlayerEntityMixin",
     "EntityTrackerEntryMixin",
-    "EntityPredicatesMixin"
+    "EntityPredicatesMixin",
+    "RaidManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

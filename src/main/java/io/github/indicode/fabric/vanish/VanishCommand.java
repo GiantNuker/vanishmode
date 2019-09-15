@@ -13,6 +13,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
@@ -29,6 +30,7 @@ import java.util.function.Consumer;
 public class VanishCommand {
     private enum Setting {
         MOBS_IGNORE("mobs_ignore", pair -> pair.getLeft().mobs_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().mobs_ignore)),
+        EVENTS_IGNORE("events_ignore", pair -> pair.getLeft().events_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().events_ignore)),
         SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate)),
         BOUNDINGBOX("no_hitbox", pair -> pair.getLeft().boundingbox = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().boundingbox));
         String id;
@@ -124,11 +126,12 @@ public class VanishCommand {
         } else if (!seesVanished) {
             player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, 1));
         }
+        //Text prevCustomName = player.getCustomName();
             player.world.getPlayers().forEach(nplayer -> {
                 ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
                 if (nplayer != player && VanishDB.canSeeVanished(pl.getGameProfile().getId())) {
-                    pl.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), vanished ? 3 : 4));
 
+                    pl.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), vanished ? 3 : 4));
                 } else if (nplayer != player && newVanish) {
                     sendPlayerPacket(pl, player, vanished && !VanishDB.canSeeVanished(pl.getGameProfile().getId()));
                 }
@@ -139,7 +142,7 @@ public class VanishCommand {
                     pl.networkHandler.sendPacket(new TeamS2CPacket((Team)player.getScoreboardTeam(), Arrays.asList(player.getGameProfile().getName()), 3));
                 }
             });
-
+        //if (vanished) player.setCustomName(prevCustomName);
     }
         //VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
     private static void sendPlayerPacket(ServerPlayerEntity to, ServerPlayerEntity packet, boolean hide) {
