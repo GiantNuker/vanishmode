@@ -10,7 +10,11 @@
     "EntityPredicatesMixin",
     "RaidManagerMixin",
     "ZombieSiegeMixin",
-    "LootableContainerMixin"
+    "LootableContainerMixin",
+    "TargetPredicateMixin",
+    "SitOnShoulderMixin",
+    "FollowOwnerGoalMixin",
+    "AttackAiMixin"
   ],
   "injectors": {
     "defaultRequire": 1
