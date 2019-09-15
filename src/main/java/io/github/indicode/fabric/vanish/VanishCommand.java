@@ -14,6 +14,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -114,10 +115,9 @@ public class VanishCommand {
             } else {
                 VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
             }
-            System.out.println(VanishDB.vanishersVisibleTeam.getPlayerList());
             player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, seesVanished ? 0 : 1));
             if (!vanished && seesVanished) {
-                player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), 3));
+                //player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), 3));
                 VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
             }
         } else if (!seesVanished) {
@@ -125,21 +125,30 @@ public class VanishCommand {
         }
             player.world.getPlayers().forEach(nplayer -> {
                 ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
-                if (nplayer != player && VanishDB.canSeeVanished(nplayer.getGameProfile().getId())) {
+                if (nplayer != player && VanishDB.getOrCreateSettings(nplayer.getGameProfile().getId()).seeVanished) {
                     pl.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), vanished ? 3 : 4));
 
                 } else if (nplayer != player && newVanish) {
-                    pl.networkHandler.sendPacket(vanished ? new EntitiesDestroyS2CPacket(player.getEntityId()) :
-                            new PlayerSpawnS2CPacket(player));
+                    sendPlayerPacket(pl, player, vanished);
                 }
                 if (sval != seesVanished && pl != player) {
-                    player.networkHandler.sendPacket(!seesVanished && VanishDB.isVanished(pl.getGameProfile().getId()) ? new EntitiesDestroyS2CPacket(pl.getEntityId()) :
-                            new PlayerSpawnS2CPacket(pl));
+                    sendPlayerPacket(player, pl, !seesVanished && VanishDB.isVanished(pl.getGameProfile().getId()));
                 } else if (!seesVanished && pl != player && VanishDB.isVanished(pl.getGameProfile().getId())) {
-                    player.networkHandler.sendPacket(new EntitiesDestroyS2CPacket(pl.getEntityId()));
+                    sendPlayerPacket(player, pl, false);
                 }
             });
 
     }
         //VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
+    private static void sendPlayerPacket(ServerPlayerEntity to, ServerPlayerEntity packet, boolean hide) {
+        if (hide) {
+            to.networkHandler.sendPacket(new EntitiesDestroyS2CPacket(packet.getEntityId()));
+        } else {
+            to.networkHandler.sendPacket(new PlayerSpawnS2CPacket(packet));
+            int int_3 = MathHelper.floor(packet.yaw * 256.0F / 360.0F);
+            int int_4 = MathHelper.floor(packet.pitch * 256.0F / 360.0F);
+            to.networkHandler.sendPacket(new EntityS2CPacket.Rotate(packet.getEntityId(), (byte)int_3, (byte)int_4, packet.onGround));
+            to.networkHandler.sendPacket(new EntityTrackerUpdateS2CPacket(packet.getEntityId(), packet.getDataTracker(), true));
+        }
+    }
 }
