@@ -16,6 +16,9 @@
     "FollowOwnerGoalMixin",
     "AttackAiMixin"
   ],
+  "client": [
+    "IntegratedServerMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

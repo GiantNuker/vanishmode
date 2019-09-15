@@ -1,9 +1,14 @@
 package io.github.indicode.fabric.vanish;
 
+import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,5 +51,18 @@ public class VanishDB {
     }
     public static void setSeesVanished(UUID player, boolean canSeeVanished) {
         getOrCreateSettings(player).seeVanished = canSeeVanished;
+    }
+    public static void init(MinecraftServer server) {
+        VanishDB.data.clear();
+        VanishDB.vanishBar = new ServerBossBar(new LiteralText("You Are In Vanish").formatted(Formatting.WHITE), BossBar.Color.WHITE, BossBar.Style.PROGRESS);
+
+        VanishDB.vanishTeamsScoreboard = new Scoreboard();
+
+        VanishDB.vanishersVisibleTeam = new Team(VanishDB.vanishTeamsScoreboard, "vanish_seers");
+        VanishDB.vanishersVisibleTeam.setShowFriendlyInvisibles(true);
+        VanishDB.vanishersVisibleTeam.setFriendlyFireAllowed(true);
+        VanishDB.vanishersVisibleTeam.setPrefix(new LiteralText("[").formatted(Formatting.GRAY).append(new LiteralText("V").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("] ").formatted(Formatting.GRAY))));
+        VanishDB.vanishersVisibleTeam.setSuffix(new LiteralText(" [").formatted(Formatting.GRAY).append(new LiteralText("V").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("]").formatted(Formatting.GRAY))));
+        VanishDB.vanishersVisibleTeam.setCollisionRule(AbstractTeam.CollisionRule.NEVER);
     }
 }
