@@ -8,6 +8,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.network.packet.*;
 import net.minecraft.scoreboard.ServerScoreboard;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -135,6 +136,9 @@ public class VanishCommand {
                     sendPlayerPacket(player, pl, !seesVanished && VanishDB.isVanished(pl.getGameProfile().getId()));
                 } else if (!seesVanished && pl != player && VanishDB.isVanished(pl.getGameProfile().getId())) {
                     sendPlayerPacket(player, pl, false);
+                }
+                if (newVanish && nplayer != player && !vanished && player.getScoreboardTeam() != null && player.getScoreboardTeam() instanceof Team) {
+                    pl.networkHandler.sendPacket(new TeamS2CPacket((Team)player.getScoreboardTeam(), Arrays.asList(player.getGameProfile().getName()), 3));
                 }
             });
 
