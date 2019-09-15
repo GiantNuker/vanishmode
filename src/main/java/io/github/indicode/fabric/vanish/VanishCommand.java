@@ -126,16 +126,14 @@ public class VanishCommand {
         }
             player.world.getPlayers().forEach(nplayer -> {
                 ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
-                if (nplayer != player && VanishDB.getOrCreateSettings(nplayer.getGameProfile().getId()).seeVanished) {
+                if (nplayer != player && VanishDB.canSeeVanished(pl.getGameProfile().getId())) {
                     pl.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), vanished ? 3 : 4));
 
                 } else if (nplayer != player && newVanish) {
-                    sendPlayerPacket(pl, player, vanished);
+                    sendPlayerPacket(pl, player, vanished && !VanishDB.canSeeVanished(pl.getGameProfile().getId()));
                 }
                 if (sval != seesVanished && pl != player) {
                     sendPlayerPacket(player, pl, !seesVanished && VanishDB.isVanished(pl.getGameProfile().getId()));
-                } else if (!seesVanished && pl != player && VanishDB.isVanished(pl.getGameProfile().getId())) {
-                    sendPlayerPacket(player, pl, false);
                 }
                 if (newVanish && nplayer != player && !vanished && player.getScoreboardTeam() != null && player.getScoreboardTeam() instanceof Team) {
                     pl.networkHandler.sendPacket(new TeamS2CPacket((Team)player.getScoreboardTeam(), Arrays.asList(player.getGameProfile().getName()), 3));
