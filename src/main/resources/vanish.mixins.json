@@ -19,7 +19,9 @@
     "FollowOwnerGoalMixin",
     "AttackAiMixin",
     "MobEntityMixin",
-    "TrackTargetGoalMixin"
+    "TrackTargetGoalMixin",
+    "ProjectileEntityMixin",
+    "ThrownEntityMixin"
   ],
   "client": [
     "IntegratedServerMixin"
