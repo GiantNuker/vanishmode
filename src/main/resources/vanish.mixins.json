@@ -12,6 +12,7 @@
     "ZombieSiegeMixin",
     "LootableContainerMixin",
     "LockableContainerMixin",
+    "ChestBEMixin",
     "TargetPredicateMixin",
     "SitOnShoulderMixin",
     "FollowOwnerGoalMixin",

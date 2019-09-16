@@ -33,6 +33,7 @@ public class VanishCommand {
         EVENTS_IGNORE("events_ignore", pair -> pair.getLeft().events_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().events_ignore)),
         //SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate)),
         BOUNDINGBOX("no_hitbox", pair -> pair.getLeft().boundingbox = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().boundingbox)),
+        SILENT_CHESTS("silent_chests", pair -> pair.getLeft().silent_chests = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().silent_chests)),
         GENERATE_LOOT("generate_loot", pair -> pair.getLeft().generates_chests = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().generates_chests)),
         IGNORE_LOCKS("ignore_locks", pair -> pair.getLeft().ignore_locks = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().ignore_locks)),
         INVINCIBLE("invincible", pair -> pair.getLeft().invincible = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().invincible)),

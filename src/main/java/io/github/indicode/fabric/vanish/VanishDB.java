@@ -31,6 +31,7 @@ public class VanishDB {
         events_ignore = true,
         spectator_predicate = false, // dont ask
         boundingbox = false,
+        silent_chests = true,
         generates_chests = false,
         ignore_locks = true,
         invincible = true;
