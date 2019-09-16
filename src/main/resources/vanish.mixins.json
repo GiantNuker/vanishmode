@@ -14,7 +14,9 @@
     "TargetPredicateMixin",
     "SitOnShoulderMixin",
     "FollowOwnerGoalMixin",
-    "AttackAiMixin"
+    "AttackAiMixin",
+    "MobEntityMixin",
+    "TrackTargetGoalMixin"
   ],
   "client": [
     "IntegratedServerMixin"
