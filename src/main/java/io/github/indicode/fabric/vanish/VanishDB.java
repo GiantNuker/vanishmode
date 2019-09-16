@@ -7,6 +7,7 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
@@ -29,7 +30,14 @@ public class VanishDB {
         events_ignore = true,
         spectator_predicate = true,
         boundingbox = false,
-        generates_chests = false;
+        generates_chests = false,
+        invincible = true;
+        public void updateSettings(ServerPlayerEntity player) {
+            if(vanished && invincible) player.abilities.invulnerable = true;
+            else if (!vanished) {
+                player.interactionManager.getGameMode().setAbilitites(player.abilities);
+            }
+        }
     }
     public static VanishSettings getOrCreateSettings(UUID id) {
         if (!data.containsKey(id)) {

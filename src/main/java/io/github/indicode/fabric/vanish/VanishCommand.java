@@ -33,7 +33,8 @@ public class VanishCommand {
         EVENTS_IGNORE("events_ignore", pair -> pair.getLeft().events_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().events_ignore)),
         //SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate)),
         BOUNDINGBOX("no_hitbox", pair -> pair.getLeft().boundingbox = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().boundingbox)),
-        GENERATE_LOOT("generate_loot", pair -> pair.getLeft().generates_chests = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().generates_chests));
+        GENERATE_LOOT("generate_loot", pair -> pair.getLeft().generates_chests = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().generates_chests)),
+        INVINCIBLE("invincible", pair -> pair.getLeft().invincible = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().invincible));
         String id;
         Consumer<Pair<VanishDB.VanishSettings, Boolean>> setter;
         Consumer<Pair<VanishDB.VanishSettings, AtomicBoolean>> getter;
@@ -48,9 +49,10 @@ public class VanishCommand {
             getter.accept(new Pair<>(settings, value));
             return value.get();
         }
-        public void set(UUID uuid, boolean enabled) {
-            VanishDB.VanishSettings settings = VanishDB.getOrCreateSettings(uuid);
+        public void set(ServerPlayerEntity player, boolean enabled) {
+            VanishDB.VanishSettings settings = VanishDB.getOrCreateSettings(player.getGameProfile().getId());
             setter.accept(new Pair<>(settings, enabled));
+            settings.updateSettings(player);
         }
     }
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -84,8 +86,7 @@ public class VanishCommand {
         return 0;
     }
     private static int writeSetting(ServerCommandSource source, Setting setting, boolean enabled) throws CommandSyntaxException {
-        UUID uuid = source.getPlayer().getGameProfile().getId();
-        setting.set(uuid, enabled);
+        setting.set(source.getPlayer(), enabled);
         source.sendFeedback(new LiteralText(setting.id + " is now " + (enabled ? "enabled" : "disabled")).formatted(Formatting.GREEN), false);
         return 0;
     }
@@ -105,6 +106,7 @@ public class VanishCommand {
         boolean newVanish = VanishDB.isVanished(player.getGameProfile().getId()) != vanished;
         VanishDB.setVanished(player.getGameProfile().getId(), vanished);
         VanishDB.setSeesVanished(player.getGameProfile().getId(), seeVanished);
+        VanishDB.getOrCreateSettings(player.getGameProfile().getId()).updateSettings(player);
         boolean seesVanished = vanished || seeVanished;
         if (vanished) {
             VanishDB.vanishBar.addPlayer(player);
