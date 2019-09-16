@@ -28,9 +28,10 @@ public class VanishDB {
         seeVanished = false,
         mobs_ignore = true,
         events_ignore = true,
-        spectator_predicate = true,
+        spectator_predicate = false, // dont ask
         boundingbox = false,
         generates_chests = false,
+        ignore_locks = true,
         invincible = true;
         public void updateSettings(ServerPlayerEntity player) {
             if(vanished && invincible) player.abilities.invulnerable = true;

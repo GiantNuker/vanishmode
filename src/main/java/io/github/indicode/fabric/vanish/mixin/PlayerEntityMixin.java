@@ -52,8 +52,4 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     public void dontApplyHere(CallbackInfo ci) {
         if (VanishDB.isVanished(getGameProfile().getId())) ((ServerPlayerEntity)(Object)this).setInvisible(true);
     }
-    @Redirect(method = "openContainer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isSpectator()Z"))
-    public boolean isVanishedContainer(ServerPlayerEntity playerEntity) {
-        return playerEntity.isSpectator() || (VanishDB.isVanished(playerEntity.getGameProfile().getId()) && !VanishDB.getOrCreateSettings(playerEntity.getGameProfile().getId()).generates_chests);
-    }
 }
