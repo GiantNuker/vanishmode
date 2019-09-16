@@ -48,7 +48,7 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     public void isVanished(CallbackInfoReturnable ci) {
         //if (VanishDB.isVanished(getGameProfile().getId())) ci.setReturnValue(true);
     }
-    @Inject(method = "sendAbilitiesUpdate", at = @At("RETURN"), cancellable = true)
+    @Inject(method = {"updatePotionVisibility", "sendAbilitiesUpdate"}, at = @At("RETURN"), cancellable = true)
     public void dontApplyHere(CallbackInfo ci) {
         if (VanishDB.isVanished(getGameProfile().getId())) ((ServerPlayerEntity)(Object)this).setInvisible(true);
     }
