@@ -26,6 +26,7 @@ public class VanishDB {
     public static class VanishSettings {
         public boolean vanished = false,
         seeVanished = false,
+        partial_spectator = false,
         mobs_ignore = true,
         events_ignore = true,
         spectator_predicate = false, // dont ask

@@ -35,7 +35,8 @@ public class VanishCommand {
         BOUNDINGBOX("no_hitbox", pair -> pair.getLeft().boundingbox = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().boundingbox)),
         GENERATE_LOOT("generate_loot", pair -> pair.getLeft().generates_chests = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().generates_chests)),
         IGNORE_LOCKS("ignore_locks", pair -> pair.getLeft().ignore_locks = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().ignore_locks)),
-        INVINCIBLE("invincible", pair -> pair.getLeft().invincible = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().invincible));
+        INVINCIBLE("invincible", pair -> pair.getLeft().invincible = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().invincible)),
+        SPECTATOR("partial-spectator", pair -> pair.getLeft().partial_spectator = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().partial_spectator));
         String id;
         Consumer<Pair<VanishDB.VanishSettings, Boolean>> setter;
         Consumer<Pair<VanishDB.VanishSettings, AtomicBoolean>> getter;
