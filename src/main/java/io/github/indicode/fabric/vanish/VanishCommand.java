@@ -2,24 +2,21 @@ package io.github.indicode.fabric.vanish;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.github.indicode.fabric.permissions.Thimble;
 import net.minecraft.client.network.packet.*;
-import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -28,7 +25,8 @@ import java.util.function.Consumer;
  * @author Indigo Amann
  */
 public class VanishCommand {
-    private enum Setting {
+    public static final String PERM_HEAD = "vanish";
+    public enum Setting {
         MOBS_IGNORE("mobs_ignore", pair -> pair.getLeft().mobs_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().mobs_ignore)),
         EVENTS_IGNORE("events_ignore", pair -> pair.getLeft().events_ignore = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().events_ignore)),
         //SPECTATOR_PREDICATE("spectator_predicate", pair -> pair.getLeft().spectator_predicate = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().spectator_predicate)),
@@ -60,18 +58,22 @@ public class VanishCommand {
     }
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("vanish");
+        command.requires(source -> Thimble.hasPermissionChildOrOp(source, PERM_HEAD, 2));
         {
             LiteralArgumentBuilder<ServerCommandSource> view = CommandManager.literal("view");
+            view.requires(source -> Thimble.hasPermissionOrOp(source, PERM_HEAD + ".view", 2));
             view.executes(context -> toggleSeesVanish(context.getSource().getPlayer()));
             command.then(view);
         }
         {
-            LiteralArgumentBuilder<ServerCommandSource> settings = CommandManager.literal("settings");
+            LiteralArgumentBuilder<ServerCommandSource> settings = CommandManager.literal("setting");
+            settings.requires(source -> Thimble.hasPermissionChildOrOp(source, PERM_HEAD + ".setting", 2));
             for (Setting setting : Setting.values()) {
                 LiteralArgumentBuilder<ServerCommandSource> literal = CommandManager.literal(setting.id);
                 literal.executes(context -> readSetting(context.getSource(), setting));
                 {
                     RequiredArgumentBuilder<ServerCommandSource, Boolean> set = CommandManager.argument("enabled", BoolArgumentType.bool());
+                    set.requires(source -> Thimble.hasPermissionOrOp(source, PERM_HEAD + ".setting." + setting.id, 2));
                     set.executes(context -> writeSetting(context.getSource(), setting, BoolArgumentType.getBool(context, "enabled")));
                     literal.then(set);
                 }
@@ -79,7 +81,13 @@ public class VanishCommand {
             }
             command.then(settings);
         }
-        command.executes(context -> toggleVanish(context.getSource().getPlayer()));
+        command.executes(context -> {
+            if (Thimble.hasPermissionOrOp(context.getSource(), PERM_HEAD + ".vanish", 2)) return toggleVanish(context.getSource().getPlayer());
+            else {
+                context.getSource().sendFeedback(new LiteralText("You do not have permission to vanish.").formatted(Formatting.RED), false);
+                return 0;
+            }
+        });
         dispatcher.register(command);
     }
     private static int readSetting(ServerCommandSource source, Setting setting) throws CommandSyntaxException {

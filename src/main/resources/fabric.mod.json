@@ -17,6 +17,11 @@
   "icon": "assets/vanish/icon.png",
 
   "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.indicode.fabric.vanish.Vanish"
+    ]
+  },
   "mixins": [
     "vanish.mixins.json"
   ],
