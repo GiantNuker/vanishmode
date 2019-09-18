@@ -13,7 +13,7 @@ public class Vanish implements ModInitializer {
     public void onInitialize() {
         Thimble.permissionWriters.add(pair -> {
             pair.getLeft().addGroup(getPerm("vanish", "vanish"));
-            pair.getLeft().addGroup(getPerm("", "vanish"));
+            pair.getLeft().addGroup(getPerm(null, "vanish"));
             pair.getLeft().addGroup(getPerm("vanish", "view"));
             pair.getLeft().addGroup(getPerm("vanish", "setting"));
             for (VanishCommand.Setting setting: VanishCommand.Setting.values()) {
@@ -23,8 +23,8 @@ public class Vanish implements ModInitializer {
         });
     }
     private Permission getPerm(String parent, String perm) {
-        System.out.println(Thimble.PERMISSIONS.getPermission(parent).getFullIdentifier());
-        return new Permission(perm, Thimble.PERMISSIONS.getPermission(parent)) {
+        //System.out.println(Thimble.PERMISSIONS.getPermission(parent).getFullIdentifier());
+        return new Permission(perm, parent == null ? null : Thimble.PERMISSIONS.getPermission(parent)) {
             @Override
             public boolean shouldSave() {
                 return false;
