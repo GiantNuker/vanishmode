@@ -21,7 +21,7 @@ public class EntityPredicatesMixin {
         if (entity.isSpectator()) return true;
         if (entity instanceof ServerPlayerEntity) {
             UUID uuid = ((ServerPlayerEntity) entity).getGameProfile().getId();
-            return VanishDB.isVanished(uuid) && VanishDB.getOrCreateSettings(uuid).spectator_predicate;
+            return VanishDB.INSTANCE.isVanished(uuid) && VanishDB.INSTANCE.getOrCreateSettings(uuid).spectator_predicate;
         }
         return false;
     }
@@ -30,7 +30,7 @@ public class EntityPredicatesMixin {
         if (entity.isSpectator()) return true;
         if (entity instanceof ServerPlayerEntity) {
             UUID uuid = ((ServerPlayerEntity) entity).getGameProfile().getId();
-            return VanishDB.isVanished(uuid) && VanishDB.getOrCreateSettings(uuid).mobs_ignore;
+            return VanishDB.INSTANCE.isVanished(uuid) && VanishDB.INSTANCE.getOrCreateSettings(uuid).mobs_ignore;
         }
         return false;
     }

@@ -15,6 +15,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class ProjectileEntityMixin {
     @Redirect(method = "method_18071", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;isSpectator()Z"))
     private boolean isVanished(Entity playerEntity) {
-        return playerEntity.isSpectator() || (playerEntity instanceof PlayerEntity && VanishDB.isVanished(((PlayerEntity) playerEntity).getGameProfile().getId()));
+        return playerEntity.isSpectator() || (playerEntity instanceof PlayerEntity && VanishDB.INSTANCE.isVanished(((PlayerEntity) playerEntity).getGameProfile().getId()));
     }
 }

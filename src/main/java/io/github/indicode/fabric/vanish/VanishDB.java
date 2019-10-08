@@ -18,11 +18,12 @@ import java.util.*;
  * @author Indigo Amann
  */
 public class VanishDB {
-    public static ServerBossBar vanishBar = null;
-    public static Team vanishersVisibleTeam = null;
-    public static Scoreboard vanishTeamsScoreboard;
-    public static final Map<UUID, VanishSettings> data = new HashMap<>();
-    public static class VanishSettings {
+    public static VanishDB INSTANCE = null;
+    public ServerBossBar vanishBar = null;
+    public Team vanishersVisibleTeam = null;
+    public Scoreboard vanishTeamsScoreboard;
+    public final Map<UUID, VanishSettings> data = new HashMap<>();
+    public class VanishSettings {
         public boolean vanished = false,
         seeVanished = false,
         partial_spectator = false,
@@ -41,7 +42,7 @@ public class VanishDB {
             }
         }
     }
-    public static VanishSettings getOrCreateSettings(UUID id) {
+    public VanishSettings getOrCreateSettings(UUID id) {
         if (!data.containsKey(id)) {
             VanishSettings settings = new VanishSettings();
             data.put(id, settings);
@@ -50,66 +51,66 @@ public class VanishDB {
             return data.get(id);
         }
     }
-    public static boolean isVanished(UUID player) {
+    public boolean isVanished(UUID player) {
         return getOrCreateSettings(player).vanished;
     }
-    public static boolean canSeeVanished(UUID player) {
+    public boolean canSeeVanished(UUID player) {
         return getOrCreateSettings(player).seeVanished || isVanished(player);
     }
-    public static void setVanished(UUID player, boolean vanished) {
+    public void setVanished(UUID player, boolean vanished) {
         getOrCreateSettings(player).vanished = vanished;
     }
-    public static void setSeesVanished(UUID player, boolean canSeeVanished) {
+    public void setSeesVanished(UUID player, boolean canSeeVanished) {
         getOrCreateSettings(player).seeVanished = canSeeVanished;
     }
-    public static void updateNewlyJoinedClient(ServerPlayerEntity player) {
+    public void updateNewlyJoinedClient(ServerPlayerEntity player) {
         UUID uuid = player.getGameProfile().getId();
         resetVanish(player);
         updateClient(player, isVanished(uuid), canSeeVanished(uuid), isVanished(uuid));
     }
-    public static void resetVanish(ServerPlayerEntity player) {
-        if (VanishDB.vanishersVisibleTeam.getPlayerList().contains(player.getGameProfile().getName()))VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
+    public void resetVanish(ServerPlayerEntity player) {
+        if (this.vanishersVisibleTeam.getPlayerList().contains(player.getGameProfile().getName()))this.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
     }
-    public static void updateClient(ServerPlayerEntity player, boolean vanished, boolean seeVanished) {
-        updateClient(player, vanished, seeVanished, VanishDB.isVanished(player.getGameProfile().getId()) != vanished);
+    public void updateClient(ServerPlayerEntity player, boolean vanished, boolean seeVanished) {
+        updateClient(player, vanished, seeVanished, this.isVanished(player.getGameProfile().getId()) != vanished);
     }
-    public static void updateClient(ServerPlayerEntity player, boolean vanished, boolean seeVanished, boolean newVanish) {
-        VanishDB.setVanished(player.getGameProfile().getId(), vanished);
-        VanishDB.setSeesVanished(player.getGameProfile().getId(), seeVanished);
-        VanishDB.getOrCreateSettings(player.getGameProfile().getId()).updateSettings(player);
+    public void updateClient(ServerPlayerEntity player, boolean vanished, boolean seeVanished, boolean newVanish) {
+        this.setVanished(player.getGameProfile().getId(), vanished);
+        this.setSeesVanished(player.getGameProfile().getId(), seeVanished);
+        this.getOrCreateSettings(player.getGameProfile().getId()).updateSettings(player);
         boolean seesVanished = vanished || seeVanished;
         if (vanished) {
-            VanishDB.vanishBar.addPlayer(player);
+            this.vanishBar.addPlayer(player);
         } else {
-            VanishDB.vanishBar.removePlayer(player);
+            this.vanishBar.removePlayer(player);
         }
         player.sendAbilitiesUpdate();
-        boolean sval = VanishDB.vanishersVisibleTeam.getPlayerList().contains(player.getGameProfile().getName());
+        boolean sval = this.vanishersVisibleTeam.getPlayerList().contains(player.getGameProfile().getName());
         if (sval != seesVanished) {
             if (seesVanished) {
-                VanishDB.vanishTeamsScoreboard.addPlayerToTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
+                this.vanishTeamsScoreboard.addPlayerToTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
             } else {
-                VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
+                this.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
             }
-            player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, seesVanished ? 0 : 1));
+            player.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, seesVanished ? 0 : 1));
             if (!vanished && seesVanished) {
-                //player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), 3));
-                VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
+                //player.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), 3));
+                this.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
             }
         } else if (!seesVanished) {
-            player.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, 1));
+            player.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, 1));
         }
         //Text prevCustomName = player.getCustomName();
         player.world.getPlayers().forEach(nplayer -> {
             ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
-            if (nplayer != player && VanishDB.canSeeVanished(pl.getGameProfile().getId())) {
+            if (nplayer != player && this.canSeeVanished(pl.getGameProfile().getId())) {
 
-                pl.networkHandler.sendPacket(new TeamS2CPacket(VanishDB.vanishersVisibleTeam, Collections.singletonList(player.getGameProfile().getName()), vanished ? 3 : 4));
+                pl.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, Collections.singletonList(player.getGameProfile().getName()), vanished ? 3 : 4));
             } else if (nplayer != player && newVanish) {
-                sendPlayerPacket(pl, player, vanished && !VanishDB.canSeeVanished(pl.getGameProfile().getId()));
+                sendPlayerPacket(pl, player, vanished && !this.canSeeVanished(pl.getGameProfile().getId()));
             }
             if (sval != seesVanished && pl != player) {
-                sendPlayerPacket(player, pl, !seesVanished && VanishDB.isVanished(pl.getGameProfile().getId()));
+                sendPlayerPacket(player, pl, !seesVanished && this.isVanished(pl.getGameProfile().getId()));
             }
             if (newVanish && nplayer != player && !vanished && player.getScoreboardTeam() != null && player.getScoreboardTeam() instanceof Team) {
                 pl.networkHandler.sendPacket(new TeamS2CPacket((Team)player.getScoreboardTeam(), Collections.singletonList(player.getGameProfile().getName()), 3));
@@ -117,8 +118,8 @@ public class VanishDB {
         });
         //if (vanished) player.setCustomName(prevCustomName);
     }
-    //VanishDB.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), VanishDB.vanishersVisibleTeam);
-    private static void sendPlayerPacket(ServerPlayerEntity to, ServerPlayerEntity packet, boolean hide) {
+    //this.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
+    private void sendPlayerPacket(ServerPlayerEntity to, ServerPlayerEntity packet, boolean hide) {
         if (hide) {
             to.networkHandler.sendPacket(new EntitiesDestroyS2CPacket(packet.getEntityId()));
         } else {
@@ -130,17 +131,20 @@ public class VanishDB {
         }
     }
 
+    private VanishDB(MinecraftServer server) {
+        this.data.clear();
+        this.vanishBar = new ServerBossBar(new LiteralText("You Are In Vanish").formatted(Formatting.WHITE), BossBar.Color.WHITE, BossBar.Style.PROGRESS);
+
+        this.vanishTeamsScoreboard = new Scoreboard();
+
+        this.vanishersVisibleTeam = new Team(this.vanishTeamsScoreboard, "vanish_seers");
+        this.vanishersVisibleTeam.setShowFriendlyInvisibles(true);
+        this.vanishersVisibleTeam.setFriendlyFireAllowed(true);
+        this.vanishersVisibleTeam.setPrefix(new LiteralText("[").formatted(Formatting.GRAY).append(new LiteralText("V").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("] ").formatted(Formatting.GRAY))));
+        this.vanishersVisibleTeam.setSuffix(new LiteralText(" [").formatted(Formatting.GRAY).append(new LiteralText("V").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("]").formatted(Formatting.GRAY))));
+        this.vanishersVisibleTeam.setCollisionRule(AbstractTeam.CollisionRule.NEVER);
+    }
     public static void init(MinecraftServer server) {
-        VanishDB.data.clear();
-        VanishDB.vanishBar = new ServerBossBar(new LiteralText("You Are In Vanish").formatted(Formatting.WHITE), BossBar.Color.WHITE, BossBar.Style.PROGRESS);
-
-        VanishDB.vanishTeamsScoreboard = new Scoreboard();
-
-        VanishDB.vanishersVisibleTeam = new Team(VanishDB.vanishTeamsScoreboard, "vanish_seers");
-        VanishDB.vanishersVisibleTeam.setShowFriendlyInvisibles(true);
-        VanishDB.vanishersVisibleTeam.setFriendlyFireAllowed(true);
-        VanishDB.vanishersVisibleTeam.setPrefix(new LiteralText("[").formatted(Formatting.GRAY).append(new LiteralText("V").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("] ").formatted(Formatting.GRAY))));
-        VanishDB.vanishersVisibleTeam.setSuffix(new LiteralText(" [").formatted(Formatting.GRAY).append(new LiteralText("V").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("]").formatted(Formatting.GRAY))));
-        VanishDB.vanishersVisibleTeam.setCollisionRule(AbstractTeam.CollisionRule.NEVER);
+        INSTANCE = new VanishDB(server);
     }
 }

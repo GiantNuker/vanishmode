@@ -41,13 +41,13 @@ public class VanishCommand {
             this.setter = setter;
         }
         public boolean get(UUID uuid) {
-            VanishDB.VanishSettings settings = VanishDB.getOrCreateSettings(uuid);
+            VanishDB.VanishSettings settings = VanishDB.INSTANCE.getOrCreateSettings(uuid);
             AtomicBoolean value = new AtomicBoolean();
             getter.accept(new Pair<>(settings, value));
             return value.get();
         }
         public void set(ServerPlayerEntity player, boolean enabled) {
-            VanishDB.VanishSettings settings = VanishDB.getOrCreateSettings(player.getGameProfile().getId());
+            VanishDB.VanishSettings settings = VanishDB.INSTANCE.getOrCreateSettings(player.getGameProfile().getId());
             setter.accept(new Pair<>(settings, enabled));
             settings.updateSettings(player);
         }
@@ -99,15 +99,15 @@ public class VanishCommand {
         return 0;
     }
     private static int toggleVanish(ServerPlayerEntity player) {
-        boolean vanished = !VanishDB.isVanished(player.getGameProfile().getId());
+        boolean vanished = !VanishDB.INSTANCE.isVanished(player.getGameProfile().getId());
         player.sendMessage(new LiteralText("You are " + (vanished ? "now in" : "no longer in") + " vanish.").formatted(Formatting.GREEN));
-        VanishDB.updateClient(player, vanished, VanishDB.getOrCreateSettings(player.getGameProfile().getId()).seeVanished);
+        VanishDB.INSTANCE.updateClient(player, vanished, VanishDB.INSTANCE.getOrCreateSettings(player.getGameProfile().getId()).seeVanished);
         return 0;
     }
     private static int toggleSeesVanish(ServerPlayerEntity player) {
-        boolean seevanished = !VanishDB.canSeeVanished(player.getGameProfile().getId());
+        boolean seevanished = !VanishDB.INSTANCE.canSeeVanished(player.getGameProfile().getId());
         player.sendMessage(new LiteralText("You can " + (seevanished ? "now see" : "no longer see") + " players in vanish.").formatted(Formatting.GREEN));
-        VanishDB.updateClient(player, VanishDB.isVanished(player.getGameProfile().getId()), seevanished);
+        VanishDB.INSTANCE.updateClient(player, VanishDB.INSTANCE.isVanished(player.getGameProfile().getId()), seevanished);
         return 0;
     }
 

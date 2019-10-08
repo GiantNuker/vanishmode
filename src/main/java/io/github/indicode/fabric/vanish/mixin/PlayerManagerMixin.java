@@ -16,6 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PlayerManagerMixin {
     @Inject(method = "onPlayerConnect", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 3))
     private void updateIfVanished(ClientConnection clientConnection_1, ServerPlayerEntity player, CallbackInfo ci) {
-        VanishDB.updateNewlyJoinedClient(player);
+        VanishDB.INSTANCE.updateNewlyJoinedClient(player);
     }
 }

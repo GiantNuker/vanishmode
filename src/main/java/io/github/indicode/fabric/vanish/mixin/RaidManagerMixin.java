@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class RaidManagerMixin {
     @Inject(method = "startRaid", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isSpectator()Z"), cancellable = true)
     public void disableVanishedRaid(ServerPlayerEntity entity, CallbackInfoReturnable ci) {
-        if (VanishDB.isVanished(entity.getGameProfile().getId()) && VanishDB.getOrCreateSettings(entity.getGameProfile().getId()).events_ignore) {
+        if (VanishDB.INSTANCE.isVanished(entity.getGameProfile().getId()) && VanishDB.INSTANCE.getOrCreateSettings(entity.getGameProfile().getId()).events_ignore) {
             ci.setReturnValue(null);
         }
     }

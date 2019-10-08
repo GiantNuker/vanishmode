@@ -15,6 +15,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class FollowOwnerGoalMixin {
     @Redirect(method = "canStart", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSpectator()Z"))
     public boolean isVanished(LivingEntity playerEntity) {
-        return playerEntity.isSpectator() || (playerEntity instanceof PlayerEntity && VanishDB.isVanished(((PlayerEntity) playerEntity).getGameProfile().getId()));
+        return playerEntity.isSpectator() || (playerEntity instanceof PlayerEntity && VanishDB.INSTANCE.isVanished(((PlayerEntity) playerEntity).getGameProfile().getId()));
     }
 }

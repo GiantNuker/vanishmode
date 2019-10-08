@@ -16,6 +16,6 @@ public class AttackAiMixin {
     @Redirect(method = "shouldContinue", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSpectator()Z"))
     public boolean isVanished(LivingEntity playerEntity) {
         System.out.println("Spectaterin");
-        return playerEntity.isSpectator() || (playerEntity instanceof PlayerEntity && VanishDB.isVanished(((PlayerEntity) playerEntity).getGameProfile().getId()) && VanishDB.getOrCreateSettings(((PlayerEntity) playerEntity).getGameProfile().getId()).mobs_ignore);
+        return playerEntity.isSpectator() || (playerEntity instanceof PlayerEntity && VanishDB.INSTANCE.isVanished(((PlayerEntity) playerEntity).getGameProfile().getId()) && VanishDB.INSTANCE.getOrCreateSettings(((PlayerEntity) playerEntity).getGameProfile().getId()).mobs_ignore);
     }
 }

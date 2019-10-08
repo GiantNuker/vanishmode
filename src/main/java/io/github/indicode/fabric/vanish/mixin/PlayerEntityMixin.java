@@ -5,14 +5,11 @@ import io.github.indicode.fabric.vanish.VanishDB;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -29,7 +26,7 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
 
     @Override
     public Box getBoundingBox() {
-        if (VanishDB.isVanished(getGameProfile().getId()) && VanishDB.getOrCreateSettings(getGameProfile().getId()).boundingbox) {
+        if (VanishDB.INSTANCE.isVanished(getGameProfile().getId()) && VanishDB.INSTANCE.getOrCreateSettings(getGameProfile().getId()).boundingbox) {
             return new Box(0, 0, 0, 0, 0, 0);
         } else {
             return super.getBoundingBox();
@@ -37,19 +34,19 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     }
     @Override
     public boolean isPushable() {
-        return VanishDB.isVanished(getGameProfile().getId()) ? false : super.isPushable();
+        return VanishDB.INSTANCE.isVanished(getGameProfile().getId()) ? false : super.isPushable();
     }
     @Override
     public void pushAwayFrom(Entity entity_1) {
-        if (VanishDB.isVanished(getGameProfile().getId())) return;
+        if (VanishDB.INSTANCE.isVanished(getGameProfile().getId())) return;
         else super.pushAwayFrom(entity_1);
     }
     @Inject(method = "isSpectator", at = @At("HEAD"), cancellable = true)
     public void isVanished(CallbackInfoReturnable ci) {
-        if (VanishDB.isVanished(getGameProfile().getId()) && VanishDB.getOrCreateSettings(getGameProfile().getId()).partial_spectator) ci.setReturnValue(true);
+        if (VanishDB.INSTANCE.isVanished(getGameProfile().getId()) && VanishDB.INSTANCE.getOrCreateSettings(getGameProfile().getId()).partial_spectator) ci.setReturnValue(true);
     }
     @Inject(method = {"updatePotionVisibility", "sendAbilitiesUpdate"}, at = @At("RETURN"), cancellable = true)
     public void dontApplyHere(CallbackInfo ci) {
-        if (VanishDB.isVanished(getGameProfile().getId())) ((ServerPlayerEntity)(Object)this).setInvisible(true);
+        if (VanishDB.INSTANCE.isVanished(getGameProfile().getId())) ((ServerPlayerEntity)(Object)this).setInvisible(true);
     }
 }
