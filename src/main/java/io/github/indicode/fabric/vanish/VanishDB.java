@@ -1,8 +1,10 @@
 package io.github.indicode.fabric.vanish;
 
+import io.github.indicode.fabric.worlddata.NBTWorldData;
 import net.minecraft.client.network.packet.*;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
@@ -12,7 +14,11 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.*;
+import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Indigo Amann
@@ -40,6 +46,15 @@ public class VanishDB {
             else if (!vanished) {
                 player.interactionManager.getGameMode().setAbilitites(player.abilities);
             }
+        }
+
+        public CompoundTag toNBT() {
+            CompoundTag tag = new CompoundTag();
+            tag.putBoolean("vanished", vanished);
+            return tag;
+        }
+        public void fromNBT(CompoundTag tag) {
+            vanished = tag.getBoolean("vanished");
         }
     }
     public VanishSettings getOrCreateSettings(UUID id) {
@@ -146,5 +161,28 @@ public class VanishDB {
     }
     public static void init(MinecraftServer server) {
         INSTANCE = new VanishDB(server);
+    }
+    static class DataStorageHandler extends NBTWorldData {
+
+        @Override
+        public File getSaveFile(File worldDir, File rootDir, boolean backup) {
+            return new File(worldDir, "vanished." + (backup ? "dat_old" : "dat"));
+        }
+
+        @Override
+        public CompoundTag toNBT(CompoundTag tag) {
+            VanishDB.INSTANCE.data.forEach((uuid, settings) -> tag.put(uuid.toString(), settings.toNBT()));
+            return tag;
+        }
+
+        @Override
+        public void fromNBT(CompoundTag tag) {
+            System.out.println(VanishDB.INSTANCE);
+            VanishDB.INSTANCE.data.clear();
+            tag.getKeys().forEach(uuid -> {
+                CompoundTag stag = tag.getCompound(uuid);
+                VanishDB.INSTANCE.getOrCreateSettings(UUID.fromString(uuid)).fromNBT(stag);
+            });
+        }
     }
 }

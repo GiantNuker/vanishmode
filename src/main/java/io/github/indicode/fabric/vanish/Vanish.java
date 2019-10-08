@@ -2,6 +2,7 @@ package io.github.indicode.fabric.vanish;
 
 import io.github.indicode.fabric.permissions.Permission;
 import io.github.indicode.fabric.permissions.Thimble;
+import io.github.indicode.fabric.worlddata.WorldDataLib;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -21,6 +22,7 @@ public class Vanish implements ModInitializer {
             }
             Thimble.PERMISSIONS.mapPermissions(Thimble.PERMISSIONS.getRegisteredPermissions()).forEach((a, b) -> System.out.println(a + " - " + b));
         });
+        WorldDataLib.addIOCallback(new VanishDB.DataStorageHandler());
     }
     private Permission getPerm(String parent, String perm) {
         //System.out.println(Thimble.PERMISSIONS.getPermission(parent).getFullIdentifier());
