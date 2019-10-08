@@ -51,10 +51,28 @@ public class VanishDB {
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();
             tag.putBoolean("vanished", vanished);
+            tag.putBoolean("see_vanished", seeVanished);
+            tag.putBoolean("spectator", partial_spectator);
+            tag.putBoolean("mobs_ignore", mobs_ignore);
+            tag.putBoolean("events_ignore", events_ignore);
+            tag.putBoolean("boundingbox", boundingbox);
+            tag.putBoolean("silent_chests", silent_chests);
+            tag.putBoolean("gen_chests", generates_chests);
+            tag.putBoolean("ignore_locks", ignore_locks);
+            tag.putBoolean("invincible", invincible);
             return tag;
         }
         public void fromNBT(CompoundTag tag) {
             vanished = tag.getBoolean("vanished");
+            seeVanished = tag.getBoolean("see_vanished");
+            partial_spectator = tag.getBoolean("spectator");
+            mobs_ignore = tag.getBoolean("mobs_ignore");
+            events_ignore = tag.getBoolean("events_ignore");
+            boundingbox = tag.getBoolean("boundingbox");
+            silent_chests = tag.getBoolean("silent_chests");
+            generates_chests = tag.getBoolean("gen_chests");
+            ignore_locks = tag.getBoolean("ignore_locks");
+            invincible = tag.getBoolean("invincible");
         }
     }
     public VanishSettings getOrCreateSettings(UUID id) {
