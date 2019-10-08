@@ -21,7 +21,8 @@
     "MobEntityMixin",
     "TrackTargetGoalMixin",
     "ProjectileEntityMixin",
-    "ThrownEntityMixin"
+    "ThrownEntityMixin",
+    "PlayerManagerMixin"
   ],
   "client": [
     "IntegratedServerMixin"
