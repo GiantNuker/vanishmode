@@ -63,7 +63,7 @@ public class VanishCommand {
         }
         {
             LiteralArgumentBuilder<ServerCommandSource> settings = CommandManager.literal("setting");
-            settings.requires(source -> Thimble.hasPermissionChildOrOp(source, PERM_HEAD + ".setting", 2));
+            settings.requires(source -> Thimble.hasPermissionOrOp(source, PERM_HEAD + ".vanish", 2));
             for (Setting setting : Setting.values()) {
                 LiteralArgumentBuilder<ServerCommandSource> literal = CommandManager.literal(setting.id);
                 literal.requires(source -> Thimble.hasPermissionOrOp(source, PERM_HEAD + ".setting." + setting.id, 2));
