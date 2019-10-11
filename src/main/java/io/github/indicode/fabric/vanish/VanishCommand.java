@@ -54,7 +54,7 @@ public class VanishCommand {
     }
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         LiteralArgumentBuilder<ServerCommandSource> command = CommandManager.literal("vanish");
-        command.requires(source -> Thimble.hasPermissionChildOrOp(source, PERM_HEAD, 2));
+        command.requires(source -> Thimble.hasPermissionOrOp(source, PERM_HEAD, 2) || Thimble.hasPermissionOrOp(source, PERM_HEAD + ".vanish", 2) || Thimble.hasPermissionOrOp(source, PERM_HEAD + ".view", 2));
         {
             LiteralArgumentBuilder<ServerCommandSource> view = CommandManager.literal("view");
             view.requires(source -> Thimble.hasPermissionOrOp(source, PERM_HEAD + ".view", 2));
