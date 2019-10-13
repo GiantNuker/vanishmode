@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  */
 @Mixin(ShulkerBoxBlock.class)
 public class ShulkerBoxBlockMixin {
-    @Redirect(method = "activate", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isSpectator()Z"))
+    @Redirect(method = "onUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isSpectator()Z"))
     private boolean isVanished(PlayerEntity playerEntity, BlockState blockState_1, World world_1, BlockPos blockPos_1, PlayerEntity playerEntity_1, Hand hand_1, BlockHitResult blockHitResult_1) {
         if (playerEntity.isSpectator()) return true;
         if ((VanishDB.INSTANCE.isVanished(playerEntity.getGameProfile().getId()) && VanishDB.INSTANCE.getOrCreateSettings(playerEntity.getGameProfile().getId()).silent_chests)) {
