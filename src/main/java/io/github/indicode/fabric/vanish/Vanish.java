@@ -27,7 +27,6 @@ public class Vanish implements ModInitializer {
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
             }
-            Thimble.PERMISSIONS.mapPermissions(Thimble.PERMISSIONS.getRegisteredPermissions()).forEach((a, b) -> System.out.println(a + " - " + b));
         });
         WorldDataLib.addIOCallback(new VanishDB.DataStorageHandler());
     }
