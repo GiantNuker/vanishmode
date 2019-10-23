@@ -15,14 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 public class Vanish implements ModInitializer {
     @Override
     public void onInitialize() {
-        Thimble.permissionWriters.add(pair -> {
+        Thimble.permissionWriters.add((map, server) -> {
             try {
-                pair.getLeft().getPermission("vanish", CommandPermission.class);
-                pair.getLeft().getPermission("vanish.vanish", CommandPermission.class);
-                pair.getLeft().getPermission("vanish.view", CommandPermission.class);
-                pair.getLeft().getPermission("vanish.setting", CommandPermission.class);
+                map.getPermission("vanish", CommandPermission.class);
+                map.getPermission("vanish.vanish", CommandPermission.class);
+                map.getPermission("vanish.view", CommandPermission.class);
+                map.getPermission("vanish.setting", CommandPermission.class);
                 for (VanishCommand.Setting setting: VanishCommand.Setting.values()) {
-                    pair.getLeft().getPermission("vanish.setting." + setting.id, CommandPermission.class);
+                    map.getPermission("vanish.setting." + setting.id, CommandPermission.class);
                 }
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
