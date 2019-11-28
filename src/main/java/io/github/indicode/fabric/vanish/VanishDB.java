@@ -2,8 +2,11 @@ package io.github.indicode.fabric.vanish;
 
 import io.github.indicode.fabric.worlddata.NBTWorldData;
 import net.minecraft.client.network.packet.*;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -162,6 +165,18 @@ public class VanishDB {
             to.networkHandler.sendPacket(new EntityS2CPacket.Rotate(packet.getEntityId(), (byte)int_3, (byte)int_4, packet.onGround));
             to.networkHandler.sendPacket(new EntitySetHeadYawS2CPacket(packet, int_5));
             to.networkHandler.sendPacket(new EntityTrackerUpdateS2CPacket(packet.getEntityId(), packet.getDataTracker(), true));
+            {
+                EquipmentSlot[] var9 = EquipmentSlot.values();
+                int var12 = var9.length;
+
+                for(int var6 = 0; var6 < var12; ++var6) {
+                    EquipmentSlot equipmentSlot = var9[var6];
+                    ItemStack itemStack = packet.getEquippedStack(equipmentSlot);
+                    if (!itemStack.isEmpty()) {
+                        to.networkHandler.sendPacket(new EntityEquipmentUpdateS2CPacket(packet.getEntityId(), equipmentSlot, itemStack));
+                    }
+                }
+            }
         }
     }
 
