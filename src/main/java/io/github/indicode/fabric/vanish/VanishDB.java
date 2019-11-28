@@ -6,6 +6,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.scoreboard.AbstractTeam;
@@ -18,10 +19,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Indigo Amann
@@ -176,6 +174,9 @@ public class VanishDB {
                         to.networkHandler.sendPacket(new EntityEquipmentUpdateS2CPacket(packet.getEntityId(), equipmentSlot, itemStack));
                     }
                 }
+            }
+            for (StatusEffectInstance statusEffectInstance : packet.getStatusEffects()) {
+                to.networkHandler.sendPacket(new EntityPotionEffectS2CPacket(packet.getEntityId(), statusEffectInstance));
             }
         }
     }
