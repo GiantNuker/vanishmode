@@ -117,7 +117,6 @@ public class VanishDB {
         } else {
             this.vanishBar.removePlayer(player);
         }
-        player.sendAbilitiesUpdate();
         boolean sval = this.vanishersVisibleTeam.getPlayerList().contains(player.getGameProfile().getName());
         if (sval != seesVanished) {
             if (seesVanished) {
@@ -137,7 +136,6 @@ public class VanishDB {
         player.world.getPlayers().forEach(nplayer -> {
             ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
             if (nplayer != player && this.canSeeVanished(pl.getGameProfile().getId())) {
-
                 pl.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, Collections.singletonList(player.getGameProfile().getName()), vanished ? 3 : 4));
             } else if (nplayer != player && newVanish) {
                 sendPlayerPacket(pl, player, vanished && !this.canSeeVanished(pl.getGameProfile().getId()));
@@ -149,6 +147,7 @@ public class VanishDB {
                 pl.networkHandler.sendPacket(new TeamS2CPacket((Team)player.getScoreboardTeam(), Collections.singletonList(player.getGameProfile().getName()), 3));
             }
         });
+        player.sendAbilitiesUpdate();
         //if (vanished) player.setCustomName(prevCustomName);
     }
     //this.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
@@ -159,7 +158,9 @@ public class VanishDB {
             to.networkHandler.sendPacket(new PlayerSpawnS2CPacket(packet));
             int int_3 = MathHelper.floor(packet.yaw * 256.0F / 360.0F);
             int int_4 = MathHelper.floor(packet.pitch * 256.0F / 360.0F);
+            byte int_5 = (byte)MathHelper.floor(packet.getHeadYaw() * 256.0F / 360.0F);
             to.networkHandler.sendPacket(new EntityS2CPacket.Rotate(packet.getEntityId(), (byte)int_3, (byte)int_4, packet.onGround));
+            to.networkHandler.sendPacket(new EntitySetHeadYawS2CPacket(packet, int_5));
             to.networkHandler.sendPacket(new EntityTrackerUpdateS2CPacket(packet.getEntityId(), packet.getDataTracker(), true));
         }
     }
