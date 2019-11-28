@@ -3,6 +3,7 @@ package io.github.indicode.fabric.vanish.mixin;
 import com.mojang.authlib.GameProfile;
 import io.github.indicode.fabric.vanish.VanishDB;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
@@ -47,6 +48,10 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     }
     @Inject(method = {"updatePotionVisibility", "sendAbilitiesUpdate"}, at = @At("RETURN"), cancellable = true)
     public void dontApplyHere(CallbackInfo ci) {
-        if (VanishDB.INSTANCE.isVanished(getGameProfile().getId())) ((ServerPlayerEntity)(Object)this).setInvisible(true);
+        if (VanishDB.INSTANCE.isVanished(getGameProfile().getId())) {
+            this.setInvisible(true);
+        } else {
+            this.setInvisible(this.hasStatusEffect(StatusEffects.INVISIBILITY));
+        }
     }
 }
