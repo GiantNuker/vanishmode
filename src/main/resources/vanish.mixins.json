@@ -23,7 +23,8 @@
     "ProjectileEntityMixin",
     "ThrownEntityMixin",
     "PlayerManagerMixin",
-    "ThreadedAnvilUpdateRemoverMixin"
+    "ThreadedAnvilUpdateRemoverMixin",
+    "TrackingStopperMixin"
   ],
   "client": [
     "IntegratedServerMixin"
