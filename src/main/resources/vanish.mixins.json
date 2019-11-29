@@ -22,7 +22,8 @@
     "TrackTargetGoalMixin",
     "ProjectileEntityMixin",
     "ThrownEntityMixin",
-    "PlayerManagerMixin"
+    "PlayerManagerMixin",
+    "ThreadedAnvilUpdateRemoverMixin"
   ],
   "client": [
     "IntegratedServerMixin"
