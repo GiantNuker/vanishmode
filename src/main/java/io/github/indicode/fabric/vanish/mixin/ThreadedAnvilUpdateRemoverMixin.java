@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ThreadedAnvilUpdateRemoverMixin {
     @Shadow @Final private Entity entity;
 
-    @Redirect(method = "sendToOtherNearbyPlayers", at= @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
+    @Redirect(method = "net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker.sendToOtherNearbyPlayers(Lnet/minecraft/network/Packet;)V", at= @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
     public void dontSendVanishPackets(ServerPlayNetworkHandler serverPlayNetworkHandler, Packet<?> packet) {
         if (!(entity instanceof ServerPlayerEntity && VanishDB.INSTANCE.isVanished(((ServerPlayerEntity) entity).getGameProfile().getId()) && !VanishDB.INSTANCE.canSeeVanished(serverPlayNetworkHandler.player.getGameProfile().getId()))) {
             serverPlayNetworkHandler.sendPacket(packet);
