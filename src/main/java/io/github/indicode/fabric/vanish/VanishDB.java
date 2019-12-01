@@ -126,6 +126,9 @@ public class VanishDB {
                 this.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
             }
             player.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, seesVanished ? 0 : 1));
+            if (!seesVanished && player.getScoreboardTeam() instanceof Team) {
+                player.networkHandler.sendPacket(new TeamS2CPacket((Team)player.getScoreboardTeam(), Collections.singletonList(player.getGameProfile().getName()), 3));
+            }
             if (!vanished && seesVanished) {
                 //player.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, Arrays.asList(player.getGameProfile().getName()), 3));
                 this.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
