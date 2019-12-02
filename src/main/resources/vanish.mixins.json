@@ -24,7 +24,8 @@
     "ThrownEntityMixin",
     "PlayerManagerMixin",
     "ThreadedAnvilUpdateRemoverMixin",
-    "TrackingStopperMixin"
+    "TrackingStopperMixin",
+    "ItemPickupMixin"
   ],
   "client": [
     "IntegratedServerMixin"

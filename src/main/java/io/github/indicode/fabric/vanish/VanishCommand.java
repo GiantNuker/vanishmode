@@ -31,6 +31,7 @@ public class VanishCommand {
         GENERATE_LOOT("generate_loot", pair -> pair.getLeft().generates_chests = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().generates_chests)),
         IGNORE_LOCKS("ignore_locks", pair -> pair.getLeft().ignore_locks = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().ignore_locks)),
         INVINCIBLE("invincible", pair -> pair.getLeft().invincible = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().invincible)),
+        ITEM_PICKUP("item_pickup", pair -> pair.getLeft().item_pickup = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().item_pickup)),
         SPECTATOR("partial-spectator", pair -> pair.getLeft().partial_spectator = pair.getRight(), pair -> pair.getRight().set(pair.getLeft().partial_spectator));
         String id;
         Consumer<Pair<VanishDB.VanishSettings, Boolean>> setter;

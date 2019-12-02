@@ -41,7 +41,8 @@ public class VanishDB {
         silent_chests = true,
         generates_chests = false,
         ignore_locks = true,
-        invincible = true;
+        invincible = true,
+        item_pickup = false;
         public void updateSettings(ServerPlayerEntity player) {
             if(vanished && invincible) player.abilities.invulnerable = true;
             else if (!vanished) {
@@ -61,6 +62,7 @@ public class VanishDB {
             tag.putBoolean("gen_chests", generates_chests);
             tag.putBoolean("ignore_locks", ignore_locks);
             tag.putBoolean("invincible", invincible);
+            tag.putBoolean("item_pickup", item_pickup);
             return tag;
         }
         public void fromNBT(CompoundTag tag) {
@@ -73,7 +75,7 @@ public class VanishDB {
             silent_chests = tag.getBoolean("silent_chests");
             generates_chests = tag.getBoolean("gen_chests");
             ignore_locks = tag.getBoolean("ignore_locks");
-            invincible = tag.getBoolean("invincible");
+            item_pickup = tag.getBoolean("item_pickup");
         }
     }
     public VanishSettings getOrCreateSettings(UUID id) {
