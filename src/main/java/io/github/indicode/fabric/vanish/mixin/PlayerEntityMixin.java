@@ -71,4 +71,8 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     protected void playSwimSound(float volume) {
         if (!VanishDB.INSTANCE.isVanished(getGameProfile().getId())) super.playSwimSound(volume);
     }
+    @Override
+    protected void spawnSprintingParticles() {
+        if (!VanishDB.INSTANCE.isVanished(getGameProfile().getId())) super.spawnSprintingParticles();
+    }
 }
