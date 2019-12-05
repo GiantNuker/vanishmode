@@ -88,10 +88,10 @@ public class VanishDB {
         }
     }
     public boolean isVanished(UUID player) {
-        return getOrCreateSettings(player).vanished;
+        return data.containsKey(player) && getOrCreateSettings(player).vanished;
     }
     public boolean canSeeVanished(UUID player) {
-        return getOrCreateSettings(player).seeVanished || isVanished(player);
+        return data.containsKey(player) && getOrCreateSettings(player).seeVanished || isVanished(player);
     }
     public void setVanished(UUID player, boolean vanished) {
         getOrCreateSettings(player).vanished = vanished;

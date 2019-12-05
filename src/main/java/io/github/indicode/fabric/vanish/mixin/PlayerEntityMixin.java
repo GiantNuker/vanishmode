@@ -2,10 +2,12 @@ package io.github.indicode.fabric.vanish.mixin;
 
 import com.mojang.authlib.GameProfile;
 import io.github.indicode.fabric.vanish.VanishDB;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,5 +58,9 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
         } else {
             this.setInvisible(this.isSpectator() || this.hasStatusEffect(StatusEffects.INVISIBILITY));
         }
+    }
+    @Override
+    public boolean isSilent() {
+        return super.isSilent() || VanishDB.INSTANCE.isVanished(getGameProfile().getId());
     }
 }
