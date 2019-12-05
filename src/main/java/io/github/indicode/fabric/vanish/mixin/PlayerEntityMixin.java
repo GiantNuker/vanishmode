@@ -63,4 +63,12 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     public boolean isSilent() {
         return super.isSilent() || VanishDB.INSTANCE.isVanished(getGameProfile().getId());
     }
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        if (!VanishDB.INSTANCE.isVanished(getGameProfile().getId())) super.playStepSound(pos, state);
+    }
+    @Override
+    protected void playSwimSound(float volume) {
+        if (!VanishDB.INSTANCE.isVanished(getGameProfile().getId())) super.playSwimSound(volume);
+    }
 }
