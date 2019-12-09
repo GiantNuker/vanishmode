@@ -18,12 +18,10 @@ public class Vanish implements ModInitializer {
         Thimble.permissionWriters.add((map, server) -> {
             map.registerPermission("vanish.vanish", PermChangeBehavior.UPDATE_COMMAND_TREE);
             map.registerPermission("vanish.view", PermChangeBehavior.UPDATE_COMMAND_TREE);
-            /*map.registerPermission("vanish.setting", PermChangeBehavior.UPDATE_COMMAND_TREE);
+            map.registerPermission("vanish.setting", PermChangeBehavior.UPDATE_COMMAND_TREE);
             for (VanishCommand.Setting setting : VanishCommand.Setting.values()) {
                 map.registerPermission("vanish.setting." + setting.id, PermChangeBehavior.UPDATE_COMMAND_TREE);
             }
-
-             */
         });
         WorldDataLib.addIOCallback(new VanishDB.DataStorageHandler());
     }
