@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.indicode.fabric.vanish.Vanish"
+      "io.github.giantnuker.fabric.vanish.Vanish"
     ]
   },
   "mixins": [
