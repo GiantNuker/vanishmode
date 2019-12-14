@@ -27,7 +27,8 @@
     "TrackingStopperMixin",
     "ItemPickupMixin",
     "LivingEntityMixin",
-    "ServerWorldMixin"
+    "ServerWorldMixin",
+    "BlockItemMixin"
   ],
   "client": [
     "IntegratedServerMixin"
