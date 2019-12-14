@@ -26,7 +26,8 @@
     "ThreadedAnvilUpdateRemoverMixin",
     "TrackingStopperMixin",
     "ItemPickupMixin",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "ServerWorldMixin"
   ],
   "client": [
     "IntegratedServerMixin"
