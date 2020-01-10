@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.indicode.fabric.permissions.Thimble;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -86,7 +87,10 @@ public class VanishCommand {
                 return 0;
             }
         });
-        dispatcher.register(command);
+        LiteralCommandNode<ServerCommandSource> node = dispatcher.register(command);
+        /*LiteralArgumentBuilder<ServerCommandSource> alias = CommandManager.literal("v");
+        alias.redirect(node);
+        dispatcher.register(alias);*/
     }
     private static int readSetting(ServerCommandSource source, Setting setting) throws CommandSyntaxException {
         UUID uuid = source.getPlayer().getGameProfile().getId();
