@@ -146,10 +146,12 @@ public class VanishDB {
                 sendPlayerPacket(pl, player, vanished && !this.canSeeVanished(pl.getGameProfile().getId()));
             }
             if (sval != seesVanished && pl != player) {
-                sendPlayerPacket(player, pl, this.isVanished(pl.getGameProfile().getId()) && !seesVanished);
                 if (seesVanished) {
                     player.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, Collections.singletonList(pl.getGameProfile().getName()), 3));
                 }
+            }
+            if (pl != player) {
+                sendPlayerPacket(player, pl, this.isVanished(pl.getGameProfile().getId()) && !seesVanished);
             }
             if (newVanish && nplayer != player && !vanished && player.getScoreboardTeam() != null && player.getScoreboardTeam() instanceof Team) {
                 pl.networkHandler.sendPacket(new TeamS2CPacket((Team)player.getScoreboardTeam(), Collections.singletonList(player.getGameProfile().getName()), 3));
