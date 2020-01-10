@@ -101,7 +101,7 @@ public class VanishDB {
     public void updateNewlyJoinedClient(ServerPlayerEntity player) {
         UUID uuid = player.getGameProfile().getId();
         resetVanish(player);
-        updateClient(player, isVanished(uuid), canSeeVanished(uuid), isVanished(uuid));
+        updateClient(player, isVanished(uuid), getOrCreateSettings(player.getGameProfile().getId()).seeVanished, isVanished(uuid));
     }
     public void resetVanish(ServerPlayerEntity player) {
         if (this.vanishersVisibleTeam.getPlayerList().contains(player.getGameProfile().getName()))this.vanishTeamsScoreboard.removePlayerFromTeam(player.getGameProfile().getName(), this.vanishersVisibleTeam);
@@ -141,12 +141,12 @@ public class VanishDB {
         player.world.getPlayers().forEach(nplayer -> {
             ServerPlayerEntity pl = ((ServerPlayerEntity)nplayer);
             if (nplayer != player && this.canSeeVanished(pl.getGameProfile().getId())) {
-                pl.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, Collections.singletonList(player.getGameProfile().getName()), vanished ? 3 : 4));
+                pl.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, Collections.singletonList(player.getGameProfile().getName()), seesVanished ? 3 : 4));
             } else if (nplayer != player && newVanish) {
                 sendPlayerPacket(pl, player, vanished && !this.canSeeVanished(pl.getGameProfile().getId()));
             }
             if (sval != seesVanished && pl != player) {
-                if (seesVanished) {
+                if (seesVanished && canSeeVanished(pl.getGameProfile().getId())) {
                     player.networkHandler.sendPacket(new TeamS2CPacket(this.vanishersVisibleTeam, Collections.singletonList(pl.getGameProfile().getName()), 3));
                 }
             }
